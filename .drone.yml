@@ -1,0 +1,77 @@
+pipeline:
+  #Build, copy, extract, docker-build and deploy for staging
+  staging | build:
+    when:
+      branch: staging
+    image: node:current-alpine
+    commands:
+      - apk update ; apk add git tar
+      - npm i
+      - env CI=false npm run-script build
+      - tar -cvzf staging.jelenamiskovic.com.tar.gz build deploy.sh nginx.conf Dockerfile
+
+  staging | copy:
+    when:
+      branch: staging
+    image: appleboy/drone-scp
+    host: 104.248.244.90
+    port: 22
+    secrets: [ ssh_password , ssh_username ]
+    source: staging.jelenamiskovic.com.tar.gz
+    target: /var/www/
+
+  staging | extract, dockerbuild, deploy:
+    when:
+      branch: staging
+    image: appleboy/drone-ssh
+    host: 104.248.244.90
+    port: 22
+    secrets: [ ssh_password , ssh_username ]
+    script:
+      - echo "=====> Extracting files!"
+      - cd /var/www ; rm -rf staging.jelenamiskovic.com ; mkdir staging.jelenamiskovic.com ; tar -xvzf staging.jelenamiskovic.com.tar.gz -C staging.jelenamiskovic.com ; rm staging.jelenamiskovic.com.tar.gz printf "User-agent:*\nDisallow:/" > staging.jelenamiskovic.com/build/robots.txt
+      - sh /var/www/staging.jelenamiskovic.com/deploy.sh "staging.jelenamiskovic.com" "staging.jelenamiskovic.com" "nenad@uon.rs"
+
+  #Build, copy, extract, docker-build and deploy for prod
+  production | build:
+    when:
+      branch: master
+    image: node:current-alpine
+    commands:
+      - apk update ; apk add git tar
+      - npm i
+      - env CI=false npm run-script build
+      - tar -cvzf jelenamiskovic.com.tar.gz build deploy.sh nginx.conf Dockerfile
+  
+  production | copy:
+    when:
+      branch: master
+    image: appleboy/drone-scp
+    host: 104.248.244.90
+    port: 22
+    secrets: [ ssh_password , ssh_username ]
+    source: jelenamiskovic.com.tar.gz
+    target: /var/www/
+
+  production | extract, dockerbuild, deploy:
+    when:
+      branch: master
+    image: appleboy/drone-ssh
+    host: 104.248.244.90
+    port: 22
+    secrets: [ ssh_password , ssh_username ]
+    script:
+      - echo "=====> Extracting files!"
+      - cd /var/www ; rm -rf jelenamiskovic.com ; mkdir jelenamiskovic.com ; tar -xvzf jelenamiskovic.com.tar.gz -C jelenamiskovic.com ; rm jelenamiskovic.com.tar.gz
+      - sh /var/www/staging.jelenamiskovic.com/deploy.sh "jelenamiskovic.com" "jelenamiskovic.com;www.jelenamiskovic.com" "nenad@uon.rs"
+
+  slack:
+    when:
+      branch: 
+        - staging
+        - master
+    image: plugins/slack
+    webhook: https://chat.uon.rs/hooks/Ed2heRuzFLY8QbcpP/wQ8uJRZHBKp7vztArPfnG2yHp6M3Su5sBDkJqPPTFzqKX4rG
+    channel: drone
+    when:
+      status: [ success, failure ]

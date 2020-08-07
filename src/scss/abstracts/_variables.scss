@@ -1,0 +1,29 @@
+// -----------------------------------------------------------------------------
+// This file contains all application-wide Sass variables.
+// -----------------------------------------------------------------------------
+
+// font-family: ;
+$Fira: "Fira Sans", sans-serif;
+$Poppins: "Poppins", sans-serif;
+$Playfair: "Playfair Display", serif;
+
+//Colors
+$black: black;
+$white: white;
+$white_tr: rgba(255, 255, 255, 0.9);
+$gray: #e2e2e2;
+
+//Typography
+
+$h1_size: 72px;
+$h2_size: 36px;
+
+$p_size: 14px;
+$p_height: 25px;
+$p_weight: 300;
+
+$filter: drop-shadow(0px 0px 50px gray);
+$filterOther: drop-shadow(5px 5px 10px black);
+$filterOtherL: drop-shadow(-5px 5px 5px black);
+$filterOtherR: drop-shadow(5px 5px 5px black);
+$filterOtherI: drop-shadow(0px 0px 2px black);

@@ -1,0 +1,26 @@
+@charset 'UTF-8';
+
+// 1. Configuration and helpers
+@import "abstracts/variables", "abstracts/functions", "abstracts/mixins";
+
+// 2. Vendors
+@import "vendors/normalize";
+
+// 3. Base stuff
+@import "base/base", "base/fonts", "base/typography", "base/helpers";
+
+// 4. Menu
+// @import "../component/Menu/styles.scss";
+
+// 5. Components
+@import "../component/Header/styles.scss";
+// @import "../component/Footer/styles.scss";
+@import "../pages/PageOne/styles.scss";
+@import "../pages/Usluge/styles.scss";
+@import "../pages/Omeni/styles.scss";
+@import "../component/Portfolio/styles.scss";
+@import "../pages/PortOptions/styles.scss";
+@import "../component/_OptionsComponent/styles.scss";
+
+// 6. Grid Border
+// @import "../component/_GridBorder/styles.scss";
